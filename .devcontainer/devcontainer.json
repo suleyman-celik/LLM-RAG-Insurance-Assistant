@@ -1,0 +1,26 @@
+{
+  "name": "Ollama ROCm Dev",
+  "image": "ollama/ollama:rocm",
+
+  "runArgs": [
+    "--device=/dev/kfd",
+    "--device=/dev/dri",
+    "--group-add=video"
+  ],
+
+  "forwardPorts": [11434],
+
+  "overrideCommand": false,
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+
+  "postCreateCommand": "ollama pull phi3"
+}
