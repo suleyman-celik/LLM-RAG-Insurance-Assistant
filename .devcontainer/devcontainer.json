@@ -2,11 +2,7 @@
   "name": "Ollama ROCm Dev",
   "image": "ollama/ollama:rocm",
 
-  "runArgs": [
-    "--device=/dev/kfd",
-    "--device=/dev/dri",
-    "--group-add=video"
-  ],
+  "runArgs": [],
 
   "forwardPorts": [11434],
 
