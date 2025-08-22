@@ -1,6 +1,6 @@
 {
-  "name": "Ollama ROCm Dev",
-  "image": "ollama/ollama:rocm",
+  "name": "Ollama Dev",
+  "image": "ollama/ollama:latest",
 
   "runArgs": [],
 
