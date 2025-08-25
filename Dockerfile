@@ -10,6 +10,9 @@ COPY ["Pipfile", "Pipfile.lock", "./"]
 RUN pipenv install --deploy --ignore-pipfile --system
 
 COPY customer_assist .
+# RUN apt-get update && apt-get install -y tzdata \
+#     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+#     && echo $TZ > /etc/timezone
 
 EXPOSE 5000
 
