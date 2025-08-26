@@ -4,8 +4,8 @@ from datetime import datetime
 
 def get_connection():
     """
-    PostgreSQL'e bağlanır.
-    Bağlantı bilgilerini kendi veritabanına göre güncelleyebilirsin.
+    PostgreSQL'e bağlanir.
+    Bağlanti bilgilerini kendi veritabanina göre güncelleyebilirsin.
     """
     return psycopg2.connect(
         host="localhost",
@@ -75,7 +75,7 @@ def insert_conversation(
 
 def add_sample_data():
     """
-    Örnek veri ekler (senin paylaştığın 'da0592e6' kaydına göre).
+    Örnek veri ekler (senin paylaştigin 'da0592e6' kaydina göre).
     """
     try:
         conn = get_connection()

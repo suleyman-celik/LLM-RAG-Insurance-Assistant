@@ -57,15 +57,19 @@ services:
 
   metabase:
     image: metabase/metabase:latest
+    container_name: customer_assistant_metabase
     ports:
-      - "3000:3000"
+      - "${METABASE_PORT}:3000"
     environment:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: ${POSTGRES_DB}
-      MB_DB_PORT: 5432
+      MB_DB_PORT: ${POSTGRES_PORT}
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
-      MB_DB_HOST: postgres
+      MB_DB_HOST: ${POSTGRES_HOST}
+      MB_ENCRYPTION_SECRET_KEY: ${METABASE_ENCRYPTION_SECRET_KEY}
+      MB_ADMIN_EMAIL: ${METABASE_ADMIN_EMAIL}
+      MB_ADMIN_PASSWORD: ${METABASE_ADMIN_PASSWORD}
     depends_on:
       - postgres
     networks:

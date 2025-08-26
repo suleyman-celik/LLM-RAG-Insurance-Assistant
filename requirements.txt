@@ -1,0 +1,10 @@
+## libraries
+pandas
+numpy
+sklearn
+# nltk
+os
+# re
+tqdm
+time
+json
