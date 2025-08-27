@@ -9,11 +9,11 @@ COPY ["Pipfile", "Pipfile.lock", "./"]
 
 RUN pipenv install --deploy --ignore-pipfile --system
 
-COPY customer_assist .
+COPY assistant .
 # RUN apt-get update && apt-get install -y tzdata \
 #     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 #     && echo $TZ > /etc/timezone
 
-EXPOSE 5000
+EXPOSE 5001
 
-CMD gunicorn --bind 0.0.0.0:5000 app:app
+CMD gunicorn --bind 0.0.0.0:5001 app:app

@@ -1,10 +1,26 @@
-## libraries
-pandas
-numpy
-sklearn
-# nltk
-os
-# re
-tqdm
-time
-json
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.20
+
+
+# Data handling
+pandas==2.2.2
+python-dotenv==1.0.1
+
+
+# API / Web Framework
+flask==2.3.3
+requests==2.31.0
+streamlit==1.27.2
+questionary==2.0.1
+
+# LLM / RAG
+transformers==4.41.2
+sentence-transformers==2.2.2
+
+# Elasticsearch client
+elasticsearch==8.12.1
+
+# Utils
+uuid==1.30  # Only if needed, Python's stdlib has uuid, so optional
+tqdm==4.66.4

@@ -136,10 +136,13 @@ import ingest
 
 
 # Initialize OpenAI client (uses OPENAI_API_KEY from env)
-client = OpenAI()
+client = OpenAI(
+    base_url='http://ollama:11434/v1/',
+    api_key='ollama',   
+)
 
 # Load index once
-index = ingest.load_index()
+index = ingest.ingest_csv()
 
 
 def search(query: str):

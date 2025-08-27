@@ -1,59 +1,71 @@
-import os
-import sys
+# import os
+# import json
+# import openai
+# import pandas as pd
+# from sqlalchemy import create_engine, text
+# from sqlalchemy.exc import SQLAlchemyError
+# from typing import List, Dict, Any
+# from openai import OpenAI
 from flask import Flask, request, jsonify
-import nbconvert
-import nbformat
-
-import importlib.util
+from rag import rag
 
 app = Flask(__name__)
 
-# Dynamically import all notebooks as modules from the notebooks folder
-NOTEBOOKS_DIR = os.path.join(os.path.dirname(__file__), '../notebooks')
-sys.path.append(NOTEBOOKS_DIR)
-
-def import_notebook_modules():
-    modules = {}
-    for fname in os.listdir(NOTEBOOKS_DIR):
-        if fname.endswith('.ipynb'):
-            py_fname = fname.replace('.ipynb', '.py')
-            py_path = os.path.join(NOTEBOOKS_DIR, py_fname)
-            # Convert .ipynb to .py if needed (requires nbconvert)
-            if not os.path.exists(py_path):
-                try:
-                    with open(os.path.join(NOTEBOOKS_DIR, fname), 'r', encoding='utf-8') as f:
-                        nb = nbformat.read(f, as_version=4)
-                    exporter = nbconvert.PythonExporter()
-                    source, _ = exporter.from_notebook_node(nb)
-                    with open(py_path, 'w', encoding='utf-8') as f:
-                        f.write(source)
-                except Exception as e:
-                    print(f"Error converting {fname}: {e}")
-                    continue
-            # Import the .py file as a module
-            module_name = py_fname.replace('.py', '')
-            spec = importlib.util.spec_from_file_location(module_name, py_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            modules[module_name] = module
-    return modules
-
-notebook_modules = import_notebook_modules()
-
-@app.route('/ask', methods=['POST'])
+@app.route("/ask", methods=["POST"])
 def ask():
-    data = request.json
-    question = data.get('question', '')
-    # Example: Use a function from a notebook module to answer
-    # You may need to adjust this logic based on your notebooks' content
-    for name, module in notebook_modules.items():
-        if hasattr(module, 'answer_question'):
-            try:
-                answer = module.answer_question(question)
-                return jsonify({'answer': answer})
-            except Exception as e:
-                continue
-    return jsonify({'answer': "Sorry, I couldn't find an answer."})
+    """
+    Endpoint: POST /ask
+    Body: {"question": "Your question here"}
+    """
+    data = request.get_json()
+    question = data.get("question", "").strip()
+    if not question:
+        return jsonify({"error": "Question is required"}), 400
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    try:
+        answer_data = rag(question)
+        return jsonify({"question": question, **answer_data})
+    except Exception as e:
+        # Hata mesajını loglayabilirsin, burada sadece geri dönüyoruz
+        return jsonify({"error": f"Failed to get answer: {str(e)}"}), 500
+
+@app.route("/health", methods=["GET"])
+def health():
+    """Simple health check endpoint"""
+    return jsonify({"status": "ok"}), 200
+
+if __name__ == "__main__":
+    # Debug yalnızca local geliştirme için, production'da gunicorn kullanılacak
+    app.run(host="0.0.0.0", port=5001, debug=True)
+
+#################################################################
+# Below is the mine app.py content for reference
+#################################################################   
+    # from flask import Flask, request, jsonify
+    # from rag import rag_pipeline
+    # from db import get_connection
+
+    # app = Flask(__name__)
+
+    # @app.route("/ask", methods=["POST"])
+    # def ask():
+    #     data = request.get_json()
+    #     question = data.get("question", "")
+    #     if not question:
+    #         return jsonify({"error": "Question is required"}), 400
+
+    #     answer = rag_pipeline(question)
+    #     return jsonify({"question": question, "answer": answer})
+
+    # @app.route("/conversations", methods=["GET"])
+    # def get_conversations():
+    #     conn = get_connection()
+    #     cur = conn.cursor()
+    #     cur.execute("SELECT * FROM conversations LIMIT 50;")
+    #     rows = cur.fetchall()
+    #     conn.close()
+    #     return jsonify(rows)
+
+    # if __name__ == "__main__":
+    #     app.run(host="0.0.0.0", port=5000, debug=True)
+

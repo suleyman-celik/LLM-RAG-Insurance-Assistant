@@ -1,0 +1,32 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+openai = "*"
+gunicorn = "*"
+nbconvert = "*"
+nbformat = "*"
+importlib-metadata = "*"
+notebook = "*"
+ipykernel = "*"
+jupyterlab = "*"
+psycopg2-binary = "*"
+sqlalchemy = "*"
+pandas = "*"
+python-dotenv = "*"
+flask = "*"
+requests = "*"
+streamlit = "*"
+questionary = "*"
+transformers = "*"
+sentence-transformers = "*"
+elasticsearch = "*"
+uuid = "*"
+tqdm = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12-slim"
