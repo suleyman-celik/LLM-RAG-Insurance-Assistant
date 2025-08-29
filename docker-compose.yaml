@@ -29,10 +29,13 @@ services:
     container_name: ollama
     volumes:
       - ollama:/root/.ollama
+      - ./entrypoint_ollama.sh:/root/entrypoint.sh # Mount the entrypoint script 
     ports:
       - "11434:11434"
     networks:
       - app-network  # Ensure network is correctly referenced
+    entrypoint: ["/usr/bin/bash", "/root/entrypoint.sh"]
+
 
   app:
     build:
