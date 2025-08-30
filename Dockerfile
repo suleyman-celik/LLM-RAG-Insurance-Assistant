@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN pip install pipenv
 
-COPY Data/data.csv Data/data.csv
+COPY Data/documents-with-ids.json Data/documents-with-ids.json
 COPY ["Pipfile", "Pipfile.lock", "./"]
 
 RUN pipenv install --deploy --ignore-pipfile --system
@@ -14,6 +14,7 @@ COPY assistant .
 #     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 #     && echo $TZ > /etc/timezone
 
-EXPOSE 5001
+EXPOSE 9000
 
-CMD gunicorn --bind 0.0.0.0:5001 app:app
+
+CMD gunicorn --bind 0.0.0.0:9000 --timeout 1200 app:app

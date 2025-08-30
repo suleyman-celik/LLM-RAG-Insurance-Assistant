@@ -142,7 +142,7 @@ client = OpenAI(
 )
 
 # Load index once
-index = ingest.ingest_csv()
+index = ingest.load_index()
 
 
 def search(query: str):
@@ -193,7 +193,8 @@ CONTEXT:
 def llm(prompt: str):
     """Call LLM and return answer + token stats."""
     response = client.chat.completions.create(
-        model="openai/gpt-oss-120b:fireworks-ai",
+        # model="openai/gpt-oss-120b:fireworks-ai",
+        model="phi3",
         messages=[{"role": "user", "content": prompt}],
     )
 
@@ -258,7 +259,7 @@ def rag(query: str) -> dict:
 
     return {
         "answer": answer,
-        "model_used": "gpt-oss-120b",
+        "model_used": "phi3",
         "response_time": took,
         "relevance": relevance.get("Relevance", "UNKNOWN"),
         "relevance_explanation": relevance.get(

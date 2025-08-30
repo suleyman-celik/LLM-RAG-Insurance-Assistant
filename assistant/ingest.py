@@ -2,81 +2,61 @@ import os
 import pandas as pd
 import json
 import minsearch
+import logging
+from dotenv import load_dotenv
+from db import get_db_connection
 
+# ---------------- Logging ----------------
+logging.basicConfig(
+    level=logging.INFO,  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
 
-DATA_PATH = os.getenv("DATA_PATH", "../Data/documents-with-ids.json")
+# ---------------- Config ----------------
+DATA_PATH = (
+    os.getenv("DATA_PATH", "./Data/documents-with-ids.json")
+    if os.path.exists('/.dockerenv') else
+    "../Data/documents-with-ids.json"
+)
+logger.info("Loading data from: %s", DATA_PATH)
+if not os.path.exists(DATA_PATH):
+    raise FileNotFoundError(f"Data file not found at {DATA_PATH}")
+logger.info("Data file size: %d bytes", os.path.getsize(DATA_PATH))
 
 
 def load_index(data_path=DATA_PATH):
-    
-    with open(data_path, 'rt') as f_in:
-        documents = json.load(f_in)
+    """Load documents from JSON and create a MinSearch index."""
+    try:
+        with open(data_path, 'rt', encoding='utf-8') as f_in:
+            documents = json.load(f_in)
+        logger.info("Loaded %d documents", len(documents))
+    except json.JSONDecodeError as e:
+        logger.error("Failed to decode JSON: %s", e)
+        raise
+    except Exception as e:
+        logger.error("Error reading data file: %s", e)
+        raise
 
+    # Create a MinSearch index with specified text and keyword fields
     index = minsearch.Index(
-                            text_fields=['intent', 'question', 'response', 'category'],
-                            keyword_fields=['id']
-                            )
+        text_fields=['intent', 'question', 'response'],  # full-text searchable fields
+        keyword_fields=['id', 'category'],               # exact match fields
+    )
 
+    # Fit the index to our document list
     index.fit(documents)
+    logger.info("MinSearch index created successfully")
+
     return index
 
-import pandas as pd
-from db import get_db_connection
-
-def ingest_csv(path="Data/data.csv"):
-    df = pd.read_csv(path)
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS conversations (
-            id TEXT PRIMARY KEY,
-            question TEXT,
-            response TEXT,
-            model_used TEXT,
-            response_time FLOAT,
-            relevance TEXT,
-            relevance_explanation TEXT,
-            prompt_tokens INT,
-            completion_tokens INT,
-            total_tokens INT,
-            eval_prompt_tokens INT,
-            eval_completion_tokens INT,
-            eval_total_tokens INT,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    """)
-
-    for _, row in df.iterrows():
-        cur.execute("""
-            INSERT INTO conversations (
-                id, question, response, model_used, response_time, relevance,
-                relevance_explanation, prompt_tokens, completion_tokens, total_tokens,
-                eval_prompt_tokens, eval_completion_tokens, eval_total_tokens
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (id) DO NOTHING;
-        """, (
-            row.get("id"),
-            row.get("question"),
-            row.get("response"),
-            row.get("model_used", "phi3"),
-            row.get("response_time", 0.0),
-            row.get("relevance"),
-            row.get("relevance_explanation"),
-            row.get("prompt_tokens", 0),
-            row.get("completion_tokens", 0),
-            row.get("total_tokens", 0),
-            row.get("eval_prompt_tokens", 0),
-            row.get("eval_completion_tokens", 0),
-            row.get("eval_total_tokens", 0),
-        ))
-
-    conn.commit()
-    cur.close()
-    conn.close()
-    print("✅ CSV verileri yüklendi!")
-
 if __name__ == "__main__":
-    ingest_csv()
+    idx = load_index()
+    logger.info("Index ready for querying")
+
+    # Print first 3 documents for inspection
+    sample_docs = idx.docs[:1] if hasattr(idx, "docs") else []
+    print("Sample documents in index:")
+    for doc in sample_docs:
+        print(json.dumps(doc, indent=2, ensure_ascii=False))

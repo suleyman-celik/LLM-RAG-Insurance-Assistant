@@ -31,7 +31,7 @@ def main():
     args = parser.parse_args()
 
     # URL of your app container (port matches APP_PORT in .env/docker-compose.yml)
-    base_url = "http://localhost:5001"
+    base_url = "http://localhost:9000"
     csv_file = "./Data/ground-truth-data.csv"
 
     print("Welcome to CLI Q&A! Type questions or use --random mode.\n")

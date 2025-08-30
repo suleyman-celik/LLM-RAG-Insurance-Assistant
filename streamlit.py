@@ -8,7 +8,7 @@ st.set_page_config(page_title="Customer Assistant", page_icon="🤖", layout="wi
 st.title("Customer Assistant Q&A")
 
 # API URL (match with app service port in docker-compose)
-base_url = "http://localhost:5000"
+base_url = "http://localhost:9000"
 
 # Keep session state variables
 if "question" not in st.session_state:

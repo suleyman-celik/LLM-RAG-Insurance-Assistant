@@ -9,13 +9,14 @@ from zoneinfo import ZoneInfo
 TZ_INFO = os.getenv("TZ", "Europe/Istanbul")
 tz = ZoneInfo(TZ_INFO)
 
+HOST=os.getenv("POSTGRES_HOST", "postgres") if os.path.exists("/.dockerenv") else "localhost"
 
 def get_db_connection():
     """
     Create a new PostgreSQL connection using environment variables.
     """
     return psycopg2.connect(
-        host=os.getenv("POSTGRES_HOST", "postgres"),
+        host=HOST,
         database=os.getenv("POSTGRES_DB", "customer_assistant"),
         user=os.getenv("POSTGRES_USER", "admin"),
         password=os.getenv("POSTGRES_PASSWORD", "admin"),
