@@ -89,6 +89,70 @@ The dataset includes entities such as:
 
 ---
 
+# Quickstart
+
+This project provides an **LLM-powered Insurance Assistant** with monitoring and analytics.  
+Services run via **Docker Compose**.
+
+---
+
+## Prerequisites
+- Docker & Docker Compose installed
+- `.env` file configured with your secrets (Postgres, Grafana, OpenAI/HF tokens, etc.)
+
+---
+
+## 1. Clone Repository
+```bash
+git clone https://github.com/your-username/insurance-assistant.git
+cd insurance-assistant
+```
+
+---
+
+## 2. Start Services
+
+```bash
+docker compose up -d
+```
+
+### This will start:
+- Assistant API → [http://localhost:9000](http://localhost:9000)
+- Grafana (dashboards) → http://localhost:3000 (default user/pass: admin / from .env)
+- Adminer (DB UI for PostgreSQL) → http://localhost:8080
+
+---
+
+## 3. Run CLI
+
+You can also interact with the assistant directly from the CLI:
+```bash
+pipenv run python cli.py
+```
+
+---
+
+## 4. Logs & Monitoring
+
+View container logs:
+
+```bash
+docker compose logs -f
+```
+Access Grafana and connect it to your **Postgres** instance (postgres:5432) for dashboards
+
+![](images/grafana_dashboard.png)
+
+---
+
+## 5. Stop Services
+
+```bash
+docker compose down
+```
+
+---
+
 # Technologies
 - **Python 3.12** – core programming language.  
 - **Docker & Docker Compose** – containerization and service orchestration.  
